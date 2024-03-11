@@ -13,22 +13,23 @@ class WebhookHandler extends ProcessWebhookJob
     {
         try {
             logger('Webhook call started.');
-            $data = (array) json_decode($this->webhookCall, true)['payload'];
-            logger($data);
+            $data = json_decode($this->webhookCall, true)['payload'];
 
-            $array = [];
-            foreach ($data as $count) {
-                foreach ($count as $key => $value) {
-                    logger($key . ' : ' . $value); 
+            foreach ($data as $userData) {
+                $uid = $userData['uid'];
+
+                $existingUser = User::where('uid', $uid)->first();
+
+                if ($existingUser) {
+                    logger("Updating user with UID: $uid");
+                    $existingUser->update($userData);
+                } else {
+                    logger("Creating user with UID: $uid");
+                    User::create($userData);
                 }
-                $array[] = $count; 
             }
-            $result = User::create($count);
-                    if ($result) {
-                        logger('User created successfully.');
-                    } else {
-                        logger('User creation failed.');
-                    }
+
+            logger('Webhook data processed successfully.');
         } catch (Exception $e) {
             logger('Webhook call failed. ');
             logger($e->getMessage());

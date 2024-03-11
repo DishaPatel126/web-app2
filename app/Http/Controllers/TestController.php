@@ -17,13 +17,15 @@ class TestController extends Controller
         $uid = Str::uuid();
         try{
             $data = new User();
-            $data->uid = $uid;
+            $data->uid = $uid;  
             $data->name = $request->name;
             $data->email = $request->email;
             $data->password = $request->password;
             $data->save();
 
-            $result = $request->all();
+            $first = $data->uid;
+            $second = $request->all();
+            $result = array_merge(['uid' => $first], $second);
 
             WebhookCall::create()
             ->url(env('WEBHOOK_CLIENT_URL').'/webhooks')
@@ -39,24 +41,17 @@ class TestController extends Controller
     //update method
     public function update(Request $request, $id)
     {
-        $uid = Str::uuid();
-        // logger($id, $request->all());
         try{
-            $data = User::find($id);
+            $data = User::where('uid', $id)->first();
             // $data->uid = $uid;
             $data->name = $request->name;
             $data->email = $request->email;
             $data->password = $request->password;
             $data->save();
 
-            // $payload = [
-            //     'uid' => $data->uid,
-            //     'name' => $data->name,
-            //     'email' => $data->email,
-            //     'password' => $data->password, 
-            // ];
-
-            $result = $request->all();
+            $first = $data->uid;
+            $second = $request->all();
+            $result = array_merge(['uid' => $first], $second);
 
             WebhookCall::create()
             ->url(env('WEBHOOK_CLIENT_URL').'/webhooks')
