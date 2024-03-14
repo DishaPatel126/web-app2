@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\WebhookServer\WebhookCall;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
 
 class TestController extends Controller
 {
@@ -25,7 +26,7 @@ class TestController extends Controller
 
             $first = $data->uid;
             $second = $request->all();
-            $result = array_merge(['uid' => $first], $second);
+            $result = array_merge(['client_uid' => $first], $second);
 
             WebhookCall::create()
             ->url(env('WEBHOOK_CLIENT_URL').'/webhooks')
