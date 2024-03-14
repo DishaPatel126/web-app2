@@ -51,8 +51,9 @@ class TestController extends Controller
             $data->save();
 
             $first = $data->uid;
-            $second = $request->all();
-            $result = array_merge(['uid' => $first], $second);
+            $second = $data->client_uid;
+            $third = $request->all();
+            $result = array_merge(['uid' => $first], ['client_uid' => $second], $third);
 
             WebhookCall::create()
             ->url(env('WEBHOOK_CLIENT_URL').'/webhooks')
