@@ -65,4 +65,21 @@ class TestController extends Controller
             Response($e->getMessage())->send();
         }
     }
+
+    //delete method
+    public function delete($id){
+        $user=User::where('uid',$id);
+        $result=$user->delete();
+        if($result){
+            WebhookCall::create()
+            ->url(env('WEBHOOK_CLIENT_URL').'/webhooks')
+            ->payload([["code"=>1,"client_uid"=>$id]])
+            ->useSecret('secretkey')
+            ->dispatch();
+
+            logger(json_encode("Delete Successfully"));
+        }else{
+            logger("error to delete the data");
+        }
+    }
 }
