@@ -74,7 +74,7 @@ class TestController extends Controller
             WebhookCall::create()
             ->url(env('WEBHOOK_CLIENT_URL').'/webhooks')
             ->payload([["code"=>1,"client_uid"=>$id]])
-            ->useSecret('secretkey')
+            ->useSecret('mainkey')
             ->dispatch();
 
             logger(json_encode("Delete Successfully"));
