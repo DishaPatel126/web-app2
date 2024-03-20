@@ -1,4 +1,5 @@
-<form action="">
+<form action="/create/webhook-url" method="post">
+    @csrf
     <div class="ml-[9.9rem] md:ml-48 lg:ml-64">
         <div class="flex flex-col md:flex-row justify-center mt-16 md:mt-20 md:mx-18 md:justify-evenly">
             <div class="w-full w-2/3 md:w-1/3 mx-auto md:mx-0 pb-3">
@@ -8,26 +9,26 @@
                 </label>
                 <input
                     class="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                    type="text" placeholder="Enter your name" id="from" />
+                    type="text" placeholder="Enter your name" id="from" name="from_url"/>
                 <p class="mt-1 text-xs text-gray-500" id="error"></p>
             </div>
 
             <div class="w-full w-2/3 md:w-1/3 mx-auto md:mx-0 pb-3">
                 <label
                     class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    for="to">
+                    for="to_url">
                     To URL
                 </label>
                 <input
                     class="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                    type="text" placeholder="Enter your name" id="to" />
+                    type="text" placeholder="Enter your name" id="to" name="to_url"/>
                 <p class="mt-1 text-xs text-gray-500" id="error"></p>
             </div>
         </div>
 
 
         <div class="flex justify-center pt-2">
-            <button type="button"
+            <button type="submit"
                 class="inline-flex items-center rounded-md bg-lightCyan px-6 py-3 text-sm font-bold text-richBlue hover:bg-burntSienna/80">
                 Connect
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
