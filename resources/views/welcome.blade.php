@@ -7,7 +7,7 @@
     <title>Home</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="antialised bg-gray-200">
     @include('components.owner.navbar')
     @include('components.owner.sidebar')
     @include('components.owner.input-field')

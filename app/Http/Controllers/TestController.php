@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Session;
 class TestController extends Controller
 {
 
-
     //create method
     public function create(Request $request)
     {
