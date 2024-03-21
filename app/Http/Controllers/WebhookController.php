@@ -19,7 +19,7 @@ class WebhookController extends Controller
             WebhookCall::create()
                 ->url($request->to_url.'/webhooks')
                 ->payload(['from'=>$request->from_url])
-                ->useSecret('secretkey')
+                ->useSecret('two')
                 ->dispatch();
                 return redirect('/dashboard');
         }
