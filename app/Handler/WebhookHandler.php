@@ -58,7 +58,7 @@ class WebhookHandler extends ProcessWebhookJob
                 WebhookCall::create()
                     ->url('http://127.0.0.1:8002/webhooks')
                     ->payload([$data])
-                    ->useSecret('three')
+                    ->useSecret('two')
                     ->dispatch();
             } else {
                 logger("else part");
