@@ -3,6 +3,7 @@
 namespace App\Handler;
 
 use App\Models\User;
+use App\Models\Product;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
 use Spatie\WebhookServer\WebhookCall;
 use Illuminate\Support\Str;
@@ -12,99 +13,139 @@ class WebhookHandler extends ProcessWebhookJob
 {
     public function handle()
     {
-        $payload = $this->webhookCall->payload;
-        logger($payload);
+        try {
+            logger('Webhook call started.');
+            $payload = json_decode($this->webhookCall, true)['payload'];
+            foreach ($payload as $count) {
+                logger($count);
+
+                $existingProduct = Product::where('code', $count['code'])->first();
+                // logger($existingProduct);
+                if ($existingProduct) {
+                    // checks if "code" is set or not, if yes then deleteUser is executed, else updateUser
+                    if (isset($count['key'])) {
+                        $this->deleteProduct($existingProduct);
+                    } else {
+                        $this->updateProduct($existingProduct, $count);
+                    }
+                }
+                // if user not found then create new user 
+                else {
+                    $this->createProduct($count);
+                }
+            }
+            logger('Webhook data processed successfully.');
+        } catch (Exception $e) {
+            logger('Webhook call failed.');
+            logger($e->getMessage());
+        }
+    }
+
+    // method for creating new product
+    protected function createProduct($count)
+    {
+        logger("create product");
+        try {
+            if (isset($count['code'])) {
+                $data = new Product;
+                $data->id = $count['id'];
+                $data->code = $count['code'];
+                $data->name = $count['name'];
+                $data->quantity = $count['quantity'];
+                $data->price = $count['price'];
+                $data->description = $count['description'];
+                $data->save();
+            } else {
+                logger("else part");
+            }
+        } catch (Exception $e) {
+            logger("Webhook failed for create product");
+            logger($e->getMessage());
+        }
+    }
+
+    // method for updating existing user
+    protected function updateProduct($data, $count)
+    {
+        logger("update product");
+        logger($count);
+        try {
+            $data->id = $count['id'];
+            $data->code = $count['code'];
+            $data->name = $count['name'];
+            $data->quantity = $count['quantity'];
+            $data->price = $count['price'];
+            $data->description = $count['description'];
+            $data->save();
+        } catch (Exception $e) {
+            logger("webhook fail for update product");
+            logger($e->getMessage());
+        }
+    }
+
+    // method for deleting existing user
+    protected function deleteProduct($data)
+    {
+        logger("delete product");
+        $result = $data->delete();
+        if ($result) {
+            logger("data deleted successfully");
+        } else {
+            logger("Error to deleted the data");
+        }
     }
 }
-//         $uid = Str::uuid();
-//         try {
-//             logger('Webhook call started.');
-//             $data = json_decode($this->webhookCall, true)['payload'];
 
-//             foreach ($data as $count) {
-//                 logger("count");
-//                 logger($count);
-//                 $existingUser = User::where('uid', $count['client_uid'])->first(); //for update
-//                 $existingUser1 = User::where('client_uid', $count['client_uid'])->first(); //for delete
-//                 logger($existingUser);
-//                 if ($existingUser || $existingUser1) {
-//                     // checks if "code" is set or not, if yes then deleteUser is executed, else updateUser
-//                     if (isset($count['code'])) {
-//                         $this->deleteUser($existingUser1, $count);
-//                     } else {
-//                         $this->updateUser($existingUser, $count);
-//                     }
-//                 }
-//                 // if user not found then create new user 
-//                 else {
-//                     $this->createUser($uid, $count);
-//                 }
-//             }
-//             logger('Webhook data processed successfully.');
-//         } catch (Exception $e) {
-//             logger('Webhook call failed.');
-//             logger($e->getMessage());
-//         }
-//     }
+    //         foreach ($data as $count) {
+    //             logger("count");
+    //             logger($count);
+    //             $existingProduct = User::where('id', $count['id'])->first(); //for update
+    //             $existingProduct1 = User::where('code', $count['code'])->first(); //for delete
+    //             logger($existingProduct);
+    //             if ($existingProduct || $existingProduct1) {
+    //                 // checks if "code" is set or not, if yes then deleteUser is executed, else updateUser
+    //                 if (isset($count['code'])) {
+    //                     $this->deleteUser($existingUser1, $count);
+    //                 } else {
+    //                     $this->updateUser($existingUser, $count);
+    //                 }
+    //             }
+    //             // if user not found then create new user 
+    //             else {
+    //                 $this->createUser($uid, $count);
+    //             }
+    //         }
+    //         logger('Webhook data processed successfully.');
+    //     } catch (Exception $e) {
+    //         logger('Webhook call failed.');
+    //         logger($e->getMessage());
+    //     }
+    // }
 
-//     // method for creating new user
-//     protected function createUser($uid, $count)
-//     {
-//         try {
-//             if (isset($count['name'])) {
-//                 $data = new User;
-//                 $data->uid = $uid;
-//                 $data->client_uid = $count['client_uid'];
-//                 $data->name = $count['name'];
-//                 $data->email = $count['email'];
-//                 $data->password = $count['password'];
-//                 $data->save();
+    // method for creating new user
+    
 
-//                 $p_client_uid = ['client_uid' => $uid];
-//                 $p_uid = ['uid' => $data->client_uid];
-//                 $payload = array_merge($p_uid, $p_client_uid);
+    // method for updating existing user
+    // protected function updateUser($existingUser, $count)
+    // {
+    //     try {
+    //         $existingUser->name = $count['name'];
+    //         $existingUser->email = $count['email'];
+    //         $existingUser->password = $count['password'];
+    //         $existingUser->save();
+    //     } catch (Exception $e) {
+    //         logger("webhook fail for update user");
+    //         logger($e->getMessage());
+    //     }
+    // }
 
-//                 WebhookCall::create()
-//                     ->url(env('WEBHOOK_CLIENT_URL') . '/webhooks')
-//                     ->payload([$payload])
-//                     ->useSecret('mainkey')
-//                     ->dispatch();
-//             } 
-//             // if user is created from opposite end then client_uid is updated at opposite end
-//             else {
-//                 $uid1 = $count['uid'];
-//                 $data1 = User::where('uid', $uid1)->first();
-//                 $data1->client_uid = $count['client_uid'];
-//                 $data1->save();
-//             }
-//         } catch (Exception $e) {
-//             logger("for create");
-//             logger($e->getMessage());
-//         }
-//     }
-
-//     // method for updating existing user
-//     protected function updateUser($existingUser, $count)
-//     {
-//         try {
-//             $existingUser->name = $count['name'];
-//             $existingUser->email = $count['email'];
-//             $existingUser->password = $count['password'];
-//             $existingUser->save();
-//         } catch (Exception $e) {
-//             logger("webhook fail for update user");
-//             logger($e->getMessage());
-//         }
-//     }
-
-//     // method for deleting existing user
-//     protected function deleteUser($existingUser1, $count)
-//     {
-//         $result = $existingUser1->delete();
-//         if ($result) {
-//             logger("data deleted successfully");
-//         } else {
-//             logger("Error to deleted the data");
-//         }
-//     }
-// }
+    // // method for deleting existing user
+    // protected function deleteUser($existingUser1, $count)
+    // {
+    //     $result = $existingUser1->delete();
+    //     if ($result) {
+    //         logger("data deleted successfully");
+    //     } else {
+    //         logger("Error to deleted the data");
+    //     }
+    // }

@@ -17,13 +17,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans bg-gray-200 text-ivory antialiased">
+<body class="font-sans text-gray-900 antialiased bg-gray-200 min-h-screen">
     @include('components.owner.navbar')
-    <div class="min-h-screen bg-eerieBlack">
+    <div class="">
 
         <!-- Page Content -->
-        <main class="flex flex-col items-center pt-6">
-            <div class="mt-3 mb-12 px-6 bg-black shadow-md overflow-hidden sm:rounded-lg">
+        <main class="flex flex-col items-center pt-6 bg-gray-200">
+            <div class="mt-3 mb-12 px-6 bg-white shadow-md overflow-hidden sm:rounded-lg">
                 <div class="px-6 py-3 text-left text-green-700">
                     @if (session()->has('success'))
                         <div>
