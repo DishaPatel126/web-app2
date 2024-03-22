@@ -22,7 +22,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $data = $request->validate([
             'code' => 'required',
             'name' => 'required',
@@ -31,11 +31,6 @@ class ProductController extends Controller
             'description' => 'nullable'
         ]);
         $newProduct = Product::create($data);
-        // WebhookCall::create()
-        //     ->url('http://127.0.0.1:8000/webhooks')
-        //     ->payload([$newProduct])
-        //     ->useSecret('one')
-        //     ->dispatch();
 
         return redirect('products')->with('success', 'Product created successfully');
     }
