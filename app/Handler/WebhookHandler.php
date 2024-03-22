@@ -56,7 +56,7 @@ class WebhookHandler extends ProcessWebhookJob
                 $data->description = $count['description'];
                 $data->save();
                 WebhookCall::create()
-                    ->url('http://127.0.0.1:8002/webhooks')
+                    ->url('http://127.0.0.1:8002/webhooks') // url of the webhook server
                     ->payload([$data])
                     ->useSecret('two')
                     ->dispatch();
@@ -82,6 +82,13 @@ class WebhookHandler extends ProcessWebhookJob
             $data->price = $count['price'];
             $data->description = $count['description'];
             $data->save();
+
+            WebhookCall::create()
+                    ->url('http://127.0.0.1:8002/webhooks') // url of the webhook server
+                    ->payload([$data])
+                    ->useSecret('two')
+                    ->dispatch();
+
         } catch (Exception $e) {
             logger("webhook fail for update product");
             logger($e->getMessage());
@@ -93,6 +100,13 @@ class WebhookHandler extends ProcessWebhookJob
     {
         logger("delete product");
         $result = $data->delete();
+
+        WebhookCall::create()
+                    ->url('http://127.0.0.1:8002/webhooks') // url of the webhook server
+                    ->payload([["key"=>1,"code"=>$data->code]])
+                    ->useSecret('two')
+                    ->dispatch();
+
         if ($result) {
             logger("data deleted successfully");
         } else {
